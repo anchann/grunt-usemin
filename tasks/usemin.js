@@ -99,7 +99,7 @@ module.exports = function (grunt) {
         var revvedfinder = new RevvedFinder(function (p) { return grunt.file.expand({filter: 'isFile'}, p); }, options.dirs);
 
         // ext-specific directives handling and replacement of blocks
-        var proc = new processors[options.type](filedir, '', content, revvedfinder, function (msg) {
+        var proc = new processors[options.type](filedir, '', content, revvedfinder, options.hostUrl, function (msg) {
           grunt.log.writeln(msg);
         });
 
@@ -137,7 +137,7 @@ module.exports = function (grunt) {
 
     files.forEach(function (file) {
       var revvedfinder = new RevvedFinder(function (p) { return grunt.file.expand({filter: 'isFile'}, p); });
-      var proc = new HTMLProcessor(path.dirname(file.path), dest, file.body, revvedfinder, function (msg) {
+      var proc = new HTMLProcessor(path.dirname(file.path), dest, file.body, revvedfinder, /* no hostUrl option for useminPrepare */ undefined, function (msg) {
         grunt.log.writeln(msg);
       });
 
