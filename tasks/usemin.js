@@ -73,7 +73,8 @@ module.exports = function (grunt) {
 
   grunt.registerMultiTask('usemin', 'Replaces references to non-minified scripts / stylesheets', function () {
     var options = this.options({
-      type: this.target
+      type: this.target,
+      revHashLength: 8
     });
 
     var processors = {
@@ -98,8 +99,9 @@ module.exports = function (grunt) {
         // Our revved version locator
         var revvedfinder = new RevvedFinder(function (p) { return grunt.file.expand({filter: 'isFile'}, p); }, options.dirs);
 
+        var isContentFileRevved = new RegExp('^[0-9a-fA-F]{' + options.revHashLength + '}\\..*$').test(path.basename(filepath));
         // ext-specific directives handling and replacement of blocks
-        var proc = new processors[options.type](filedir, '', content, revvedfinder, options.hostUrl, function (msg) {
+        var proc = new processors[options.type](filedir, '', content, revvedfinder, options.hostUrl, isContentFileRevved, function (msg) {
           grunt.log.writeln(msg);
         });
 
@@ -137,7 +139,7 @@ module.exports = function (grunt) {
 
     files.forEach(function (file) {
       var revvedfinder = new RevvedFinder(function (p) { return grunt.file.expand({filter: 'isFile'}, p); });
-      var proc = new HTMLProcessor(path.dirname(file.path), dest, file.body, revvedfinder, /* no hostUrl option for useminPrepare */ undefined, function (msg) {
+      var proc = new HTMLProcessor(path.dirname(file.path), dest, file.body, revvedfinder, /* no hostUrl option for useminPrepare */ undefined, undefined, function (msg) {
         grunt.log.writeln(msg);
       });
 
